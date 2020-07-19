@@ -247,29 +247,38 @@
 
 5. [Step-5] Intialize Cluster (Ref- https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#objectives)
 
-- Installing a Pod network add-on and Setup Master node [Step-6]
-  - (Master Node)
-    - kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=<static_ip_addr>
-    - \$ kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.99.10 [Static IpAddr for Master Node -> 192.168.99.10]
-    - (Run the commands shown in console)
-    - $ mkdir -p $HOME/.kube
-    - $ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-    - $ sudo chown $(id -u):$(id -g) $HOME/.kube/config
-    - (Copy this below command for worker nodes to connect with master)
-      - kubeadm join 192.168.99.10:6443 --token ftbf8q.giu7pwvel44gqy9s \
-        --discovery-token-ca-cert-hash sha256:57b378be50a35f1d8a95ad400aa77438965470bf9013fbf008a70b438b4975f1
-    - Installing Pod Network (Ref: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network)
-      - (select) Calico
-      - \$ kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
-    - Verify Network
-      - \$ kubectl get pods --all-namespaces
-      - \$ kubectl get nodes (Check if the worker nodes are listed)
-  - (To Connect all Worker Nodes to Master Node) [https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#join-nodes]
-    - (Paster the kubeadm join command with token copied earlier)
+- (Master Node) -> (All below commands to run in Debian/Master)
+  - kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=<static_ip_addr>
+  - \$ kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.99.10 [Static IpAddr for Master Node -> 192.168.99.10]
+  - (Run the commands shown in console)
+  - $ mkdir -p $HOME/.kube
+  - $ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  - $ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  - (Copy this below command for worker nodes to connect with master)
+    - kubeadm join 192.168.99.10:6443 --token ftbf8q.giu7pwvel44gqy9s \
+      --discovery-token-ca-cert-hash sha256:57b378be50a35f1d8a95ad400aa77438965470bf9013fbf008a70b438b4975f1
+
+6. [Step-6] Installing a Pod network add-on and Setup Master node (All below commands to run in Debian/Master)
+
+   - Installing Pod Network (Ref: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network)
+     - (select) Calico
+     - \$ kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
+     - NOTE: (If Calico Pod network don't work then use -> Weave Net) [i.e- In Step.7 you still see Status as Not Ready]
+     - $ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+   - Verify Network
+     - \$ kubectl get pods --all-namespaces
+     - \$ kubectl get nodes (Check if the worker nodes are listed)
+
+7. [Step-7] Join Worker nodes with -> Master node
+
+- (To Connect all Worker Nodes to Master Node) [https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#join-nodes]
+  - (Paste the kubeadm join command with token copied earlier in All WORKER NODES not in Master Node)
+  - (Worker Nodes)
     - \$ kubeadm join 192.168.99.10:6443 --token ftbf8q.giu7pwvel44gqy9s \
-       --discovery-token-ca-cert-hash sha256:57b378be50a35f1d8a95ad400aa77438965470bf9013fbf008a70b438b4975f1
-  - \$ kubectl get nodes (Check if the worker nodes are listed)
-  - (Make sure all nodes are in STATUS -> Ready state)
+      --discovery-token-ca-cert-hash sha256:57b378be50a35f1d8a95ad400aa77438965470bf9013fbf008a70b438b4975f1
+- \$ kubectl get nodes (Check if the worker nodes are listed) <-- (Run in Master Node)
+- (Make sure all nodes are in STATUS -> Ready state)
+- (Master Node)
   - (Verify by running a pod in master)
     - \$ kubectl run nginx --image=nginx
     - \$ kubectl get pods
@@ -303,5 +312,48 @@ Error: network connection (To make sure 2nd network interface -> static ip addre
 - Tried all approach to make the ipAddr static in Redhat, but not working so-
   - \$ yum install network-scripts
   - \$ ifconfig enp0s8 192.168.99.11
+  - \$ ifup enp0s8 192.168.99.11
+
+---
+
+Error - Worker Nodes are in STATUS -> NotReady state
+
+- First, STEPS to exisiting delete Pod existing POD network - Calico
+  - \$ kubeadm reset (Reset kubeadm itself)
+  - \$ kubectl get pods --all-namespaces (to verifiy)
+  - Steps to re-initalize kubeadm in master node
+    - \$ kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.99.10
+    - \$ mkdir -p \$HOME/.kube
+    - $ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    - $ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+    - [Run this command in Worker Nodes] -> \$ kubeadm join 192.168.99.10:6443 --token 8lbhei.jn6pvxj0bisciryj \
+      --discovery-token-ca-cert-hash sha256:59f0fa0c2080713fc31c8fee3d609b2bcea6a54778acb7ad82eadceba1d1aefa
+    - \$ kubectl get pods --all-namespaces
+    - \$ kubectl get nodes
+    - \$ kubeadm token list (To know the token of Master node)
+- (If Calico Pod network don't work then use -> Weave Net) [Run in Master Mode]
+  - $ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+  - (If want to reset wave pod network then) -> weave reset
+- (Now add join the worker node with master node via new token)
+  - \$ kubeadm reset
+  - \$ systemctl stop kubelet
+  - $ docker stop -f $(docker ps -aq)
+  - $ docker rm -f $(docker ps -aq)
+  - $ docker rmi -f $(docker images -q)
+  - \$ rm -f /etc/kubernetes/kubelet.conf (This file -> kubelet.conf has details of client token)
+  - \$ rm -rf ~/.kube
+  - \$ systemctl start kubelet
+  - \$ systemctl start docker
+  - \$ docker image ls -a (Check no images or container present in worker node)
+  - \$ docker cotnainer ls -a
+  - \$ kubeadm join 192.168.99.10:6443 --token 8lbhei.jn6pvxj0bisciryj \
+     --discovery-token-ca-cert-hash sha256:59f0fa0c2080713fc31c8fee3d609b2bcea6a54778acb7ad82eadceba1d1aefa
+
+* Ref:
+
+- https://stackoverflow.com/questions/53040663/kubectl-get-nodes-shows-notready
+- https://stackoverflow.com/questions/56493883/how-to-join-worker-node-in-existing-cluster
+- https://computingforgeeks.com/join-new-kubernetes-worker-node-to-existing-cluster/
+- https://www.serverlab.ca/tutorials/containers/kubernetes/how-to-add-workers-to-kubernetes-clusters/
 
 ---
