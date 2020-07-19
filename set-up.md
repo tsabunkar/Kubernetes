@@ -84,7 +84,7 @@
       - Check ssh service is running:
         - \$ ifconfig (inside servers- to know ip's)
         - debian-10 (Master Node): 192.168.0.107
-        - centos-8 (Worker Node-1): 192.168.0.105
+        - centos-8 (Worker Node-1): 192.168.0.105 (It will be changing check ifconfig)
         - fed-server (Master Node-2): 192.168.0.106
         - \$ systemctl status ssh\* (debain) or service ssh status
       - From Host Machine- Use Putty to login with ipv4 address
@@ -128,11 +128,12 @@
               - Ref-
                 - https://www.serverlab.ca/tutorials/linux/administration-linux/how-to-configure-centos-7-network-settings/
                 - https://www.cyberciti.biz/faq/howto-setting-rhel7-centos-7-static-ip-configuration/
+                - https://linuxconfig.org/rhel-8-configure-static-ip-address
           - systemctl restart network (Restart Network Settings)
           - Reboot all vm's
           - Dsiable SWAP area
             - \$ swapoff -a
-            - nano /etc/fstab (Debian based)
+            - nano /etc/fstab (Debian & Redhat based)
               - (Comment line- which is about swap as extension)
 
 ---
@@ -241,5 +242,66 @@
   - $ sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
   - \$ sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
   - \$ sudo systemctl enable --now kubelet
+
+---
+
+5. [Step-5] Intialize Cluster (Ref- https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#objectives)
+
+- Installing a Pod network add-on and Setup Master node [Step-6]
+  - (Master Node)
+    - kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=<static_ip_addr>
+    - \$ kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.99.10 [Static IpAddr for Master Node -> 192.168.99.10]
+    - (Run the commands shown in console)
+    - $ mkdir -p $HOME/.kube
+    - $ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    - $ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+    - (Copy this below command for worker nodes to connect with master)
+      - kubeadm join 192.168.99.10:6443 --token ftbf8q.giu7pwvel44gqy9s \
+        --discovery-token-ca-cert-hash sha256:57b378be50a35f1d8a95ad400aa77438965470bf9013fbf008a70b438b4975f1
+    - Installing Pod Network (Ref: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network)
+      - (select) Calico
+      - \$ kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
+    - Verify Network
+      - \$ kubectl get pods --all-namespaces
+      - \$ kubectl get nodes (Check if the worker nodes are listed)
+  - (To Connect all Worker Nodes to Master Node) [https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#join-nodes]
+    - (Paster the kubeadm join command with token copied earlier)
+    - \$ kubeadm join 192.168.99.10:6443 --token ftbf8q.giu7pwvel44gqy9s \
+       --discovery-token-ca-cert-hash sha256:57b378be50a35f1d8a95ad400aa77438965470bf9013fbf008a70b438b4975f1
+  - \$ kubectl get nodes (Check if the worker nodes are listed)
+  - (Make sure all nodes are in STATUS -> Ready state)
+  - (Verify by running a pod in master)
+    - \$ kubectl run nginx --image=nginx
+    - \$ kubectl get pods
+    - \$ kubectl delete deployment/nginx
+
+---
+
+Error : Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+
+- Run docker service : \$ systemctl start docker
+
+---
+
+Error: network connection (To make sure 2nd network interface -> static ip address are assigned to VM's)
+
+- \$ ifconfig
+- \$ ifup enp0s8 192.168.99.12
+- \$ ping www.google.com
+- \$ systemctl status network\* (Check network daemon is running fine)
+- \$ systemctl status network-online.target
+- \$ systemctl restart network-online.target
+- \$ ifup enp0s8 192.168.99.12
+- (For Redhat)
+
+  - \$ systemctl start NetworkManager
+  - \$ systemctl enable NetworkManager
+  - \$ nano /etc/sysconfig/network-scripts/ifcfg-enp0s3 (Before editing create .org) ==> [./networks-redhat.sh]
+
+- (or)
+
+- Tried all approach to make the ipAddr static in Redhat, but not working so-
+  - \$ yum install network-scripts
+  - \$ ifconfig enp0s8 192.168.99.11
 
 ---
