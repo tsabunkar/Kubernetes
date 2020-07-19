@@ -345,7 +345,7 @@ Error - Worker Nodes are in STATUS -> NotReady state
   - \$ systemctl start kubelet
   - \$ systemctl start docker
   - \$ docker image ls -a (Check no images or container present in worker node)
-  - \$ docker cotnainer ls -a
+  - \$ docker container ls -a
   - \$ kubeadm join 192.168.99.10:6443 --token 8lbhei.jn6pvxj0bisciryj \
      --discovery-token-ca-cert-hash sha256:59f0fa0c2080713fc31c8fee3d609b2bcea6a54778acb7ad82eadceba1d1aefa
 
@@ -355,5 +355,35 @@ Error - Worker Nodes are in STATUS -> NotReady state
 - https://stackoverflow.com/questions/56493883/how-to-join-worker-node-in-existing-cluster
 - https://computingforgeeks.com/join-new-kubernetes-worker-node-to-existing-cluster/
 - https://www.serverlab.ca/tutorials/containers/kubernetes/how-to-add-workers-to-kubernetes-clusters/
+
+---
+
+- Cleaning Worker Node
+  - \$ kubeadm reset
+  - \$ systemctl stop kubelet
+  - \$ systemctl stop docker
+  - \$ rm -rf /var/lib/cni/
+  - \$ rm -rf /var/lib/kubelet/\*
+  - \$ rm -rf /etc/cni/
+  - \$ rm -f /etc/kubernetes/kubelet.conf
+  - \$ rm -rf ~/.kube
+  - \$ yum remove kubeadm kubectl kubelet kubernetes-cni kube\*
+  - \$ yum autoremove
+- Reinstall Kube-related tools back in Worker Node [Step-4]
+  - \$ sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+  - \$ sudo systemctl enable --now kubelet
+
+---
+
+# Using Play with k8 environment
+
+- https://labs.play-with-k8s.com/
+- Steps
+  1.  Initializes cluster master node:
+  - $ kubeadm init --apiserver-advertise-address $(hostname -i) --pod-network-cidr 10.5.0.0/16
+  2.  Initialize cluster networking:
+  - \$ kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml
+  3. (Optional) Create an nginx deployment:
+  - \$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/application/nginx-app.yaml
 
 ---
