@@ -367,6 +367,8 @@ Error - Worker Nodes are in STATUS -> NotReady state
   - \$ rm -rf /etc/cni/
   - \$ rm -f /etc/kubernetes/kubelet.conf
   - \$ rm -rf ~/.kube
+  - \$ systemctl start docker
+  - \$ systemctl enable docker
   - \$ yum remove kubeadm kubectl kubelet kubernetes-cni kube\*
   - \$ yum autoremove
 - Reinstall Kube-related tools back in Worker Node [Step-4]
@@ -387,3 +389,26 @@ Error - Worker Nodes are in STATUS -> NotReady state
   - \$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/application/nginx-app.yaml
 
 ---
+
+# Setps to Setup Worker Node in Ubunut Server - Assume Third (3rd) Worker Node
+
+- VirtualBox > Right Click on Ubunut Instance > Settings
+- Adapter-1
+  - Attached to: Bridge Adapter
+  - Name: wlp3sO
+  - Promiscuous Mode: Allow All
+  - Ok
+- Adapter-2
+  - Attached to: Host-only Adapter
+  - Name: vboxnet0
+  - Ok
+- System > Processor > 2
+- Login into ubuntu VM (Rick VM)
+- \$ ifconfig (note down the ipAddr to login from Host Machine SSH)
+- \$ systemctl status ssh\* (Check if SSH daemon is running)
+- \$ ssh -l rick 192.168.0.111
+- \$ cat /etc/hostname (Change hostname)
+- \$ cat /etc/hosts
+- \$ ifconfig (Check if you can see the host-only network adapter)
+- \$ ifconfig enp0s8 192.168.99.13
+- \$ nano /etc/network/interfaces (edit file as -> [.assets/networks-debian.sh])
