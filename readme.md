@@ -19,8 +19,32 @@
 
 ## Containers
 
+- Why do we need containers ?
+  - Remeber about - Matrix from Hell !! (Each OS - Installing different s/w(redis,node) requires different configuration/setup which leads to ==> Compatibility/Dependency, Long setup time, Different dev/val/prod env makes it much complex, works in my system) <== Thus development, building and shipping take more time and not-smooth
+- To solve this Matrix from Hell issue --> Birth of Docker
+- Docker runs each component (s/w- Nodejs server, redis, mongodb) in its own Container
+- Think Containers are separate environment for your component/images
+- These Containers has its own libraries & Dependencies
+- Thus we can quickly start running this image (without had to worry abt configur) just by running the docker image provided by DevOps team
+- Thus Docker --> Containerize Application (Provides each appln/image its own environment)
+- What are containers ?
+  - Containers are completely isolated Environments
+  - Containers has its own Processes, Network, Mounts
+  - Think Containers are like- VM except they share same OS-Kernel
+- If your base/host OS Kernel is (Ubuntu)Linux then you can run container application of os like- fedora, suse, redhat (linux flavour) BUT YOU CANNOT RUN WINDOWS/MAC Conatiner Application on Linux based OS Kernel
+- Docker is not meant to virtualize and run different Operating System (as done by VM) but main purpose of docker is to containerize the application (like- nodejs. redis, etc) and ship & run them
+- H/w Infrastructure >> OS Kernel >> DOCKER >> {(lib + dependency) => Application} => Container
+- VM : Heaver is Size (iso images in GB) thus use hig disk-space, take lot of RAM uses lot of resources, and Take more time to boot-up
+  Containers: lower disk-space, less ram is utilized, fast boot-up
 - Most popular containerizing techonlogy - docker
+- Public Docker Registry --> Docker Hub (Where you can containerized ur custome application as images)
+- Docker Hosts <-- (Think like VM HOST but for docker, Base Machine where docker was installed upon ur OS Kernel)
+- When you run the docker image -> `docker run ansible` (This will run the Instance of Ansible application on your docker host)
 - Docker images are run as instance is called containers
+- Container v/s images
+  - Image is a package template (Think image as Class)
+  - When you run a particular image --> it create instance of this image/application is called containers (Think Container as Instance of a class)
+  - Containers are instance of a image which are isolated, each containers has its own environment,processes,network,mount
 
 ## Container Orchestration
 
