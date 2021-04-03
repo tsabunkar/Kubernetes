@@ -1,5 +1,18 @@
+# Objectives
+
+- Kubernetes
+- Containers - Docker
+- Container Orchestration?
+- Setup Kubernetes
+- k8 Concepts - PODs | ReplicaSets | Deployment | services
+- Networking in kubernetes
+- Kubernetes Management - Kubectl
+- Kubernetes Definition Files - YAML
+- Kubernetes on Cloud - AWS/GCP
+
 # Kubernetes or K8s
 
+- k8 -> Build by Google
 - Google's Container Orchestration tools
 - Open Source
 - k8 --> Containers + Orchestration
