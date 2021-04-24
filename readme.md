@@ -45,6 +45,8 @@
   - Image is a package template (Think image as Class)
   - When you run a particular image --> it create instance of this image/application is called containers (Think Container as Instance of a class)
   - Containers are instance of a image which are isolated, each containers has its own environment,processes,network,mount
+- Run you first docker image : `docker run hello-world`
+- Secound image: `docker run docker/whalesay cowsay boo`
 
 ## Container Orchestration
 
