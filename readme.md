@@ -94,6 +94,7 @@
   - Container Runtime (use to run container -> docker)
   - Controller (think- brain of k8)
   - Scheduler (distributing the work/containers across the nodes)
+  - ![components](./assets/components.png)
 
 ---
 
@@ -114,18 +115,18 @@
 - Kubernetes CLI - kube control tool (kubectl)
 - Used to deploy and Manage application on kubernetes cluster- to get cluster information, get status of other nodes, etc
 - To deploy an application on cluster
-  - \$ kubectl run hello-min
+  - `\$ kubectl run hello-min`
 - To view cluster information
-  - \$ kubectl cluster-info
+  - `\$ kubectl cluster-info`
 - To list all nodes information
-  - \$ kubectl get nodes
+  - `\$ kubectl get nodes`
 - Using kubectl we can run thousand instance of same application with single command.
-  - \$ kubectl run --replicas=1000 my-web-server
+  - `\$ kubectl run --replicas=1000 my-web-server`
 - We can confifure Kubernetes such that it can automatically handle traffic load and scale-up or down the instance depending on traffic, do load balancing, etc
-  - \$ kubectl scale --replicas=2000 my-web-server
+  - `\$ kubectl scale --replicas=2000 my-web-server`
 - with rolling-update command it can also upgrade these thousands of instances.
-  - \$ kubectl rolling-update my-web-server --image=web-server:2
-  - \$ kubectl rolling-update my-web-server --rollback (Rollback updates)
+  - `\$ kubectl rolling-update my-web-server --image=web-server:2`
+  - `\$ kubectl rolling-update my-web-server --rollback` (Rollback updates)
   - Kubernetes provides different advance network providers, storage, security, Authentication & Authorization
     ![k8](./assets/k8.png)
 
