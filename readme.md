@@ -50,13 +50,21 @@
 
 ## Container Orchestration
 
+- What is Orchestration:
+  - Orchestration is the automated configuration, management, and coordination of computer systems, applications, and services
+  - Orchestration helps IT to more easily manage complex tasks and workflows.
+  - Automation and orchestration are different, but related concepts.
+  - automation refers to automating a single task. This is different from orchestration, which is how you can automate a process or workflow that involves many steps across multiple disparate(different kind of) systems.
+  - Ref: https://www.redhat.com/en/topics/automation/what-is-orchestration
 - How to run Docker host and all its container in Prod environment, how to scale-up or down different docker host based on traffic, Connect b/w docker Hosts, Managing containers etc --done_by--> Container Orchestration
+- ![Container Orchestration](./assets/container-orchestration.png)
 - Automatically deploying, Managing containers based on traffic, etc is know as Container Orchestration technology
 - Kubernetes is Container Orchestration Technology ( Other technologies are - Docker Swarm, MESOS )
 - Kubernetes is now avaliable in all Cloud Providers like- GCP, Amazon, Azure
 - Advantages
   - Your application is highly avaliable, as h/w failure do not bring your application down- As there are multiple instance running of our application
   - User traffic is load balance b/w various containers - i.e container orchestration can quickly scale-up and down as per traffic
+  - ![k8-adv](./assets/k8-adv.png)
 - Thus Kubernetes is Container Orchestration Technology which help to deploy and Manage containers in an clustered environment.
 
 ---
@@ -67,18 +75,18 @@
   - is machine physical or virtual on which kubernetes is installed
   - A Node is a worker machine(woker node) on which containers(instance) of your application would be launched [Think a Node as Docker Host]
   - Nodes ---Called---> Minions
-  - [.assets/nodes.png]
+  - ![Nodes](./assets/nodes.png)
 - Cluster
   - A cluster is a set of nodes group together
   - Even if one node fails, our application is accessible from other nodes
   - Multiple nodes also help in sharing load
-  - [.assets/cluster.png]
+  - ![Cluster](./assets/cluster.png)
 - Master
   - Master is responsible for managing the cluster
   - Other responsibility of Master node is - information of member of cluster stored, monitoring of all worker nodes, if a node fail then need to move the workload from fail node to another worker node
   - Master is another node in which kubernetes installed in it (Configured it as Master Node).
   - Master node is responsible for actual orchestration on worker nodes
-  - [.assets/master-slave-nodes.png]
+  - ![master-slave-nodes](./assets/master-slave-nodes.png)
 - K8 comes with following components:
   - API Server (Act as frontend for Kubernetes Cluster )
   - etcd service (distributed key value storage)
@@ -97,7 +105,7 @@
   - Worker nodes has - kubelet agent
 - Master Node has -> kube-apiserver (which make this server as Master node)
   - Master component has etcd, controller, scheduler
-- [.assets/master-worker-nodes.png]
+- ![master-worker-nodes](./assets/master-worker-nodes.png)
 
 ---
 
@@ -118,7 +126,8 @@
 - with rolling-update command it can also upgrade these thousands of instances.
   - \$ kubectl rolling-update my-web-server --image=web-server:2
   - \$ kubectl rolling-update my-web-server --rollback (Rollback updates)
-  - Kubernetes provides different advance network providers, storage, security, Authentication & Authorization [.assets/k8.png]
+  - Kubernetes provides different advance network providers, storage, security, Authentication & Authorization
+    ![k8](./assets/k8.png)
 
 ---
 
