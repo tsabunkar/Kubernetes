@@ -16,6 +16,8 @@
 - Google's Container Orchestration tools
 - Open Source
 - k8 --> Containers + Orchestration
+- k8 -> open-source system for automating deployment, scaling, and management of containerized applications.
+- Ref: https://kubernetes.io/
 
 ## Containers
 

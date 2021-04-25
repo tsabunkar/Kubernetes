@@ -1,4 +1,4 @@
-# Minikube
+# Minikube Theory
 
 - Master Node consist of :- kube-apiserver, etcd, node-controller, replicas-controller
 - Worker Node consist of :- kubelet, container-runtime
@@ -8,6 +8,12 @@
   - **Hypervisor** like VMWare or VirtualBox or in linux- Kernel Virtual Machine (KVM)
   - **Kubectl** (to intreact with k8 cluster)
   - **Minikube.exe**
+
+---
+
+## Minikube
+
+- Specific to Minikube: https://minikube.sigs.k8s.io/docs/start/
 - Steps to install Minikube: [REF- https://kubernetes.io/docs/tasks/tools/install-minikube/]
   - Check Virtualization is enabled in local machine -
     - In VirtualBox if you see 64bit of OS then Virtualization is enabled (or)
