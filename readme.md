@@ -138,3 +138,41 @@
 
 - k8 uses Docker Host inorder to host docker containers.
 - K8 also provides alternative of docker -> Rocket
+
+---
+
+# Pods
+
+- Before Pods we assume that
+  - Our project appln is developed, build into docker images and these images are avaliable in docker repositry/hub (public registry) so that k8 can pull it down.
+  - Kubernetes Cluster is setup and its working (Single Node or Multi-Node cluster)
+- K8 aim to deploy application in the form of Containers on set-of m/c which are configured as worker node in a cluster
+- k8 does not deploy containers directly onto worker Nodes, rather the containers are encapsulated into an k8-objects called --> PODs
+- A Pod is a single instance of an application
+- A Pod is smallest object which we can create in k8
+- ![pods](./assets/pods.png)
+- Example/Use-case
+  - let us consider we have Single node k8 cluster, Single instance of our appln, which is running in a single docker container encapsulated in a pod ![Single-Pod](./assets/single-pod.png)
+  - But for above example let us consider If user/client load increases, then inorder to scale our appln:
+    - Instead of creating new instance in the same pod, we would create a new pod altogether (which is in-turn is a new instance of appln) thus we have 2 instance of our appln which is running on 2 separate pod on same Worker Node ![Multi-Pod](./assets/multiple-pods.png)
+  - Let us say, current still increase such that current worker-node can no-more create a new instance of pod underneath (reach threshold), then soln->
+    - Deploy/Spin-up another worker-node which will have one instance of our appl in its own pod ![multi-node](./assets/multi-node.png)
+- Thus we can conclude that: Pods have one-2-one (or direct) relation with containers running your appln
+- Also In-general for scaling:
+  - To scale-up (high load) --> Create/spin-up new pods
+  - To scale-down (no much load) --> Delete/spin-down exisiting pods
+- Multi-container Pods (Rear use-case)
+  - In general we would always have each/one pod containg --> one instance of our appln (or - one container)
+  - But in-practice we can have helper containers within the same pod,
+    - i.e- one container for your appln + another container ex- monitoring/logging <-- Inside the same POD
+    - Helper container lives a long side with your appln container, If every new pod is created then both appln container & helper container is also created together, If pod dies both of them dies/destory too.
+    - NOTE: these 2 containers can communicate/speak with each other --using--> (localhost) as there in same network space
+    - ![Multi-container-pod](./assets/Multi-container-pod.png)
+
+## How to deploy/Run Pods ?
+
+- `\$ kubectl run nginx --image nginx` (Runs/deploy nginx image instance as a container inside a pod (which is inside a node)) [NOTE: --image nginx <== Image/Repositry name in dockerHub]
+- `\$ kubectl get pods` (list of pods running) [NOTE: Container first would be in ContainerCreating status & then Running status]
+- <img src="./assets/run-pod.png" alt="run-pod" height="250" width="200"/>
+
+---

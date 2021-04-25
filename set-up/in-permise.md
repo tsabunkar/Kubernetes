@@ -1,4 +1,4 @@
-# Minikube Theory
+# Minikube Theory (Single Node k8 Cluster)
 
 - Master Node consist of :- kube-apiserver, etcd, node-controller, replicas-controller
 - Worker Node consist of :- kubelet, container-runtime
@@ -72,7 +72,7 @@
 
 ---
 
-# Kubeadm (Kube Admin Tool) Theory
+# Kubeadm (Kube Admin Tool) Theory (Multi Node k8 Cluster)
 
 - With **minikube** you can only set-up -> **Single Node Kubernetes Cluster** but with **Kubeadm** tool we can set-up **multiple node Cluster** with -> Master and worker on separate machine
 - Configuring Steps:![kubeadm-steps](../assets/kubeadm-steps.png)
