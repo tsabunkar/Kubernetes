@@ -2,8 +2,8 @@
 
 - Master Node consist of :- kube-apiserver, etcd, node-controller, replicas-controller
 - Worker Node consist of :- kubelet, container-runtime
-- ![mini-kube](./assets/mini-kube-1.png)
-- Minikube bundles all the various master and worker node components into single a image, providing us pre-configured single kubernetes cluster <-- This bundle as avaliable as .iso image![mini-kube](./assets/mini-kube-2.png)
+- ![mini-kube](../assets/mini-kube-1.png)
+- Minikube bundles all the various master and worker node components into single a image, providing us pre-configured single kubernetes cluster <-- This bundle as avaliable as .iso image![mini-kube](../assets/mini-kube-2.png)
 - Prequiste for Minikube set-up (Should be installed in ur host-machine)->
   - **Hypervisor** like VMWare or VirtualBox or in linux- Kernel Virtual Machine (KVM)
   - **Kubectl** (to intreact with k8 cluster)
@@ -59,7 +59,7 @@
 # Kubeadm (Kube Admin Tool)
 
 - With minikube you can only set-up -> Single Node Kubernetes Cluster but with Kubeadm tool we can set-up multiple node Cluster with -> Master and worker on separate machine
-- Configuring Steps:![kubeadm-steps](./assets/kubeadm-steps.png)
+- Configuring Steps:![kubeadm-steps](../assets/kubeadm-steps.png)
   1. Create muliple VM's (or System/Servers)
   2. Designate One VM(or server) as Master node and other VM's as Worker Node
   3. Install container run time(i.e- Docker) on all the host/nodes

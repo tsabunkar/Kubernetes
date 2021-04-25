@@ -8,4 +8,4 @@
 
 # 3 Ways of Setup
 
-- In-Premise: [Minikube](./set-up/in-premise.md)
+- In-Premise: [Minikube](./set-up/in-permise.md)
