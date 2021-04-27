@@ -14,8 +14,8 @@
     - Check ssh service is running:
       - `\$ ifconfig` (inside servers- to know ip's)
       - ubuntu-20-master (Master Node): 192.168.0.103
-      - ubuntu-20-worker1 (Worker Node-1): 192.168.0.104 (It will be changing check ifconfig)
-      - ubuntu-20-worker2 (Master Node-2): 192.168.0.105
+      - ubuntu-20-worker1 (Worker Node-1): 192.168.0.108 (It will be changing check ifconfig)
+      - ubuntu-20-worker2 (Master Node-2): 192.168.0.103
       - `\$ systemctl status ssh` (Should be - Active & Running)
         - (Check in all the vm's you have installed ssh-server)==> [Connection Refused Error- Make sure you have enable ssh client in all vm's : https://linuxize.com/post/how-to-enable-ssh-on-ubuntu-20-04/]
         - Steps:
@@ -37,36 +37,41 @@
       - \$ sudo nano /etc/fstab (Debian & Redhat based)
         - (Comment line- which is about `swap` as extension)
     - `\$ sudo reboot` (Reboot all vm's)
-- (Optional) Incase If you wish to not config dynamic ipv4 addr of all the nodes then:
-  - (
-    If you launch the VMs now - There Ip Address will be changed bcoz- Bydefault ipAddress for these VM are dynamic i.e- Wifi-Router allocate dynamic or random ipAddr b/e a given range everytime this VM bootsup (Kubernetes communication wont work with Dynamic Ip Address) --> To solve this problem we need to assign static ip address [quite Risky], Alternate Solution-> Create Host Only Network, by disableing dynamic ipaddr (This network will act as medium for our nodes to interact b/w each other)
-    )
-    - File > Host Network Manager
+  - If Error from host cli to connect this VM ->
+    - WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+    - Solution:
+      - \$ ssh-keygen -R <ip_add_vm/nodes>
+      - \$ ssh-keygen -R 192.168.0.108 (ip-add of vm which was giving warning)
+  - To Assign Static IpAddress to all the vm's (since each reboot will dynamically change ipaddr of these vm)
+    - Instead of Setting Static IpAddr we would rather prefer to create Host Only Network
+    - Some Theory: ( If you launch the VMs now - There Ip Address will be changed bcoz- Bydefault ipAddress for these VM are dynamic i.e- Wifi-Router allocate dynamic or random ipAddr b/e a given range everytime this VM bootsup (Kubernetes communication wont work with Dynamic Ip Address) --> To solve this problem we need to assign static ip address [quite Risky], Alternate Solution-> **Create Host Only Network**, by disableing dynamic ipaddr (This network will act as medium for our nodes to interact b/w each other) )
+    - Goto VirtualBox
+    - (Navigation bar) File > Host Network Manager
     - (Select) Enable vboxnet0 Network
-    - Select debain-10 > Settings > Network
-      - Adapter 2
+    - Now Go back to -> ubuntu-20-worker1 > right-click > Settings > Network
+      - Adapter 2 [Make sure your vm are powered-off]
       - (select) Enable Network Adapter
-      - Attached to: Host-only Adapter
-    - (Repeat above step for centos and fedora)
-  - Start All Nodes/VMs
-  - \$ ifconfig (in terminal of all vms)
-  - To Assgin Ip Address to Network Interface/Adapater =>
-    - Sytnax: ifconfig <netwrok_adapter> <ip_addr>
-    - \$ ifconfig enp0s8 192.168.99.10 (This ip can be random b/w 192.168.99.1/24 <== How do I know range, Check in- Host Network Manager) [NOTE: This is temporary way to assign IpAddr]
-    - (Repeat above steps all vms)
-    - Master Node = rick => 192.168.99.10
-    - Worker Node-1 = morty => 192.168.99.11
-    - Worker Node-2 = summer => 192.168.99.12
-    - (To assign Permanetly this IpAddress on every boot-up)
-      - nano /etc/network/interfaces (Debian based)
-        - Add line : [networks-debian](./assets/networks-debian.sh)
-      - nano /etc/sysconfig/network-scripts/ifcfg-enp0s3 (Redhat based)
-        - Add line : [networks-redhat](./assets/networks-redhat.sh)
-        - Ref-
-          - https://www.serverlab.ca/tutorials/linux/administration-linux/how-to-configure-centos-7-network-settings/
-          - https://www.cyberciti.biz/faq/howto-setting-rhel7-centos-7-static-ip-configuration/
-          - https://linuxconfig.org/rhel-8-configure-static-ip-address
-    - systemctl restart network (Restart Network Settings)
+      - Attached to: `Host-only Adapter` (select)
+      - Name: vboxnet0
+      - (Repeat above step for other nodes/vm)
+    - Start All Nodes/VMs
+    - \$ ifconfig (in terminal of all vms)
+    - To Assgin Ip Address to Network Interface/Adapater =>
+      - Sytnax: ifconfig <netwrok_adapter> <ip_addr>
+      - \$ ifconfig enp0s3 192.168.99.10 (This ip can be random b/w 192.168.99.1/24 <== How do I know range, Check in- Host Network Manager) [BUT: This is **temporary** way to assign IpAddr]
+      - Master Node = rick => 192.168.99.10
+      - Worker Node-1 = morty => 192.168.99.11
+      - Worker Node-2 = summer => 192.168.99.12
+      - (To assign **Permanetly** this IpAddress on every boot-up)
+        - \$ cat /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
+        - \$ ip add show
+        - \$ sudo nano /etc/netplan/00-installer-config.yaml
+        - copy code snippet from : `00-installer-config.yaml`
+        - \$ sudo netplan apply
+        - \$ ip route show (or ifconfig)
+        - now reboot and check, your ip show be STATIC
+        - Ref: https://www.linuxtechi.com/assign-static-ip-address-ubuntu-20-04-lts/#:~:text=Assign%20Static%20IP%20Address%20on%20Ubuntu%2020.04%20LTS%20Desktop&text=Login%20to%20your%20desktop%20environment,and%20then%20choose%20wired%20settings.&text=In%20the%20next%20window%2C%20Choose,gateway%20and%20DNS%20Server%20IP.
+      - systemctl restart network (Restart Network Settings)
 
 ---
 
@@ -229,12 +234,12 @@
 Error: network connection (To make sure 2nd network interface -> static ip address are assigned to VM's)
 
 - \$ ifconfig
-- \$ ifup enp0s8 192.168.99.12
+- \$ ifup enp0s3 192.168.99.12
 - \$ ping www.google.com
 - \$ systemctl status network\* (Check network daemon is running fine)
 - \$ systemctl status network-online.target
 - \$ systemctl restart network-online.target
-- \$ ifup enp0s8 192.168.99.12
+- \$ ifup enp0s3 192.168.99.12
 - (For Redhat)
 
   - \$ systemctl start NetworkManager
@@ -245,8 +250,8 @@ Error: network connection (To make sure 2nd network interface -> static ip addre
 
 - Tried all approach to make the ipAddr static in Redhat, but not working so-
   - \$ yum install network-scripts
-  - \$ ifconfig enp0s8 192.168.99.11
-  - \$ ifup enp0s8 192.168.99.11
+  - \$ ifconfig enp0s3 192.168.99.11
+  - \$ ifup enp0s3 192.168.99.11
 
 ---
 
