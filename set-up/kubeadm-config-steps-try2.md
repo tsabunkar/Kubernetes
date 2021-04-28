@@ -14,8 +14,8 @@
     - Check ssh service is running:
       - `\$ ifconfig` (inside servers- to know ip's)
       - ubuntu-20-master (Master Node): 192.168.0.103
-      - ubuntu-20-worker1 (Worker Node-1): 192.168.0.108 (It will be changing check ifconfig)
-      - ubuntu-20-worker2 (Master Node-2): 192.168.0.103
+      - ubuntu-20-worker1 (Worker Node-1): 192.168.0.104 (It will be changing check ifconfig)
+      - ubuntu-20-worker2 (Master Node-2): 192.168.0.108
       - `\$ systemctl status ssh` (Should be - Active & Running)
         - (Check in all the vm's you have installed ssh-server)==> [Connection Refused Error- Make sure you have enable ssh client in all vm's : https://linuxize.com/post/how-to-enable-ssh-on-ubuntu-20-04/]
         - Steps:
@@ -59,18 +59,24 @@
     - To Assgin Ip Address to Network Interface/Adapater =>
       - Sytnax: ifconfig <netwrok_adapter> <ip_addr>
       - \$ ifconfig enp0s3 192.168.99.10 (This ip can be random b/w 192.168.99.1/24 <== How do I know range, Check in- Host Network Manager) [BUT: This is **temporary** way to assign IpAddr]
-      - Master Node = rick => 192.168.99.10
-      - Worker Node-1 = morty => 192.168.99.11
-      - Worker Node-2 = summer => 192.168.99.12
+      - Master Node = rick => 192.168.0.109
+      - Worker Node-1 = morty => 192.168.0.110
+      - Worker Node-2 = summer => 192.168.0.111
       - (To assign **Permanetly** this IpAddress on every boot-up)
         - \$ cat /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
         - \$ ip add show
         - \$ sudo nano /etc/netplan/00-installer-config.yaml
         - copy code snippet from : `00-installer-config.yaml`
+        - (Make sure - requesting an IP address should be same subnet as gateway's subnet which `192.168.0.___` )
+        - \$ sudo netplan get
         - \$ sudo netplan apply
         - \$ ip route show (or ifconfig)
-        - now reboot and check, your ip show be STATIC
-        - Ref: https://www.linuxtechi.com/assign-static-ip-address-ubuntu-20-04-lts/#:~:text=Assign%20Static%20IP%20Address%20on%20Ubuntu%2020.04%20LTS%20Desktop&text=Login%20to%20your%20desktop%20environment,and%20then%20choose%20wired%20settings.&text=In%20the%20next%20window%2C%20Choose,gateway%20and%20DNS%20Server%20IP.
+        - \$ ping www.google.com (To check your ping)
+        - now reboot and check, your ip show be STATIC and able to connect from host cli
+        - Ref:
+          - https://www.linuxtechi.com/assign-static-ip-address-ubuntu-20-04-lts/#:~:text=Assign%20Static%20IP%20Address%20on%20Ubuntu%2020.04%20LTS%20Desktop&text=Login%20to%20your%20desktop%20environment,and%20then%20choose%20wired%20settings.&text=In%20the%20next%20window%2C%20Choose,gateway%20and%20DNS%20Server%20IP.
+          - https://pimylifeup.com/ubuntu-20-04-static-ip-address/
+          - https://askubuntu.com/questions/1142301/setting-a-static-ip-address-not-connecting
       - systemctl restart network (Restart Network Settings)
 
 ---
