@@ -176,3 +176,8 @@
 - <img src="./assets/run-pod.png" alt="run-pod" height="250" width="200"/>
 
 ---
+
+## Kubernetes KodeCloud Free Subscription
+
+- https://kodekloud.com/lessons/kubernetes-for-beginners-labs/
+- use the couponcode provided in Udemy Section-1, Accessing the labs
