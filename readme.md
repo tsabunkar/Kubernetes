@@ -116,6 +116,7 @@
 
 - Kubernetes CLI - kube control tool (kubectl)
 - Used to deploy and Manage application on kubernetes cluster- to get cluster information, get status of other nodes, etc
+- https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
 - To deploy an application on cluster
   - `\$ kubectl run hello-min`
 - To view cluster information
