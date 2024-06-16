@@ -32,4 +32,3 @@
 - View the app
   - curl http://localhost:8001/version
   - curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME:8080/proxy/
--
